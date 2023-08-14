@@ -13,37 +13,37 @@ import java.util.concurrent.atomic.AtomicLong;
 // Stub
 public class PostRepository {
 
-  private static final ConcurrentHashMap<Integer, String> STORAGE = new ConcurrentHashMap<>();
-  private static final AtomicLong COUNTER = new AtomicLong(1);
+  private final ConcurrentHashMap<Integer, String> storage = new ConcurrentHashMap<>();
+  private final AtomicLong counter = new AtomicLong(1);
 
 
   public List<Post> all() {
     List<Post> list = new ArrayList<>();
-    Iterator<Integer> iterator = STORAGE.keySet().iterator();
+    Iterator<Integer> iterator = storage.keySet().iterator();
     while (iterator.hasNext()) {
       Integer i = iterator.next();
-      Post post = new Post(i, STORAGE.get(i));
+      Post post = new Post(i, storage.get(i));
       list.add(post);
     }
     return list;
   }
 
   public Optional<Post> getById(long id) {
-    if (STORAGE.containsKey((int)id)) {
-        return Optional.of(new Post(id, STORAGE.get((int)id)));
+    if (storage.containsKey((int)id)) {
+        return Optional.of(new Post(id, storage.get((int)id)));
       }
     return Optional.empty();
   }
 
   public Post save(Post post) {
     if (post.getId() == 0) {
-      STORAGE.put((int)COUNTER.get(), post.getContent());
-      Post resultSave = new Post(COUNTER.get(), post.getContent());
-      COUNTER.getAndIncrement();
+      storage.put((int) counter.get(), post.getContent());
+      Post resultSave = new Post(counter.get(), post.getContent());
+      counter.getAndIncrement();
       return resultSave;
     } else {
-      if (STORAGE.containsKey((int)post.getId())) {
-        STORAGE.put((int)post.getId(), post.getContent());
+      if (storage.containsKey((int)post.getId())) {
+        storage.put((int)post.getId(), post.getContent());
         return post;
       }
     }
@@ -51,6 +51,6 @@ public class PostRepository {
   }
 
   public void removeById(long id) {
-    STORAGE.remove((int)id);
+    storage.remove((int)id);
   }
 }
